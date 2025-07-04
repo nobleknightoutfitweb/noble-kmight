@@ -205,43 +205,6 @@
             object-fit: contain;
         }
         
-        .social-icons {
-            display: flex;
-            gap: 25px;
-        }
-        
-        .social-icons a {
-            color: var(--dark);
-            font-size: 1.2rem;
-            transition: color 0.3s;
-        }
-        
-        .social-icons a:hover {
-            color: var(--primary);
-        }
-        
-        /* Chat with AI button */
-        .chat-ai-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 8px 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-            transition: all 0.3s;
-        }
-        
-        .chat-ai-btn:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
-        }
-        
         /* Checkout Form */
         .checkout-form {
             position: fixed;
@@ -334,7 +297,7 @@
             display: block;
         }
         
-        /* Hero Section */
+        /* Hero Section - Three Luxury Coach Bags */
         .hero {
             height: 100vh;
             margin-top: 0;
@@ -551,6 +514,16 @@
             font-size: 0.8rem;
             font-weight: 600;
             z-index: 2;
+        }
+        
+        .product-badge[style*="var(--secondary)"] {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         
         .product-wishlist {
@@ -908,6 +881,44 @@
             color: var(--primary);
         }
 
+        /* Brand Submenu */
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding-left: 20px;
+        }
+
+        .submenu.active {
+            max-height: 200px;
+        }
+
+        .submenu li {
+            margin-bottom: 10px;
+        }
+
+        .submenu a {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .menu-item-with-submenu {
+            position: relative;
+        }
+
+        .menu-item-with-submenu::after {
+            content: '+';
+            position: absolute;
+            right: 0;
+            transition: transform 0.3s;
+        }
+
+        .menu-item-with-submenu.active::after {
+            content: '-';
+            transform: rotate(0deg);
+        }
+
+        /* Social Icons */
         .sidebar-social {
             padding: 20px;
             border-top: 1px solid #eee;
@@ -1132,14 +1143,24 @@
         <ul class="sidebar-menu">
             <li><a href="#" onclick="backToHome(); closeSidebar()">Home</a></li>
             <li><a href="#new-arrivals" onclick="closeSidebar()">New Arrivals</a></li>
-            <li><a href="#bags" onclick="closeSidebar()">Bags</a></li>
+            <li><a href="#discount" onclick="closeSidebar()">Hot Discounts</a></li>
+            <li class="menu-item-with-submenu" onclick="toggleSubmenu(this)">
+                <a href="#bags">Bags</a>
+                <ul class="submenu">
+                    <li><a href="#bags" onclick="filterByBrand('Coach')">Coach</a></li>
+                </ul>
+            </li>
             <li><a href="#wallets" onclick="closeSidebar()">Wallets</a></li>
             <li><a href="#belts" onclick="closeSidebar()">Belts</a></li>
+            <li><a href="#" onclick="closeSidebar()">Return & Exchange Policy</a></li>
         </ul>
         <div class="sidebar-social">
             <h3>Connect With Us</h3>
             <div class="sidebar-social-icons">
                 <a href="https://wa.me/201156823048" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-tiktok"></i></a>
             </div>
         </div>
     </div>
@@ -1164,9 +1185,6 @@
                 </div>
                 
                 <div class="nav-right">
-                    <div class="social-icons">
-                        <a href="https://wa.me/201156823048" target="_blank"><i class="fab fa-whatsapp"></i></a>
-                    </div>
                     <i class="fas fa-shopping-bag" onclick="openCartModal(event)"></i>
                     <span class="cart-count">0</span>
                 </div>
@@ -1253,6 +1271,24 @@
                     <div class="product-slider-controls">
                         <div class="slider-arrow new-arrivals-left"><i class="fas fa-chevron-left"></i></div>
                         <div class="slider-arrow new-arrivals-right"><i class="fas fa-chevron-right"></i></div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Discount Section -->
+            <section class="product-section" id="discount">
+                <div class="container">
+                    <h2 class="section-title">Hot Discounts</h2>
+                    
+                    <div class="product-slider-container">
+                        <div class="product-slider" id="discount-slider">
+                            <!-- Discounted products will be dynamically inserted here -->
+                        </div>
+                    </div>
+                    
+                    <div class="product-slider-controls">
+                        <div class="slider-arrow discount-left"><i class="fas fa-chevron-left"></i></div>
+                        <div class="slider-arrow discount-right"><i class="fas fa-chevron-right"></i></div>
                     </div>
                 </div>
             </section>
@@ -1353,8 +1389,6 @@
                         
                         <p id="product-page-description" class="product-page-description"></p>
                         
-                       
-                        
                         <div class="product-page-actions">
                             <div class="product-page-quantity">
                                 <button class="product-page-quantity-btn" onclick="changeProductPageQuantity(-1)">-</button>
@@ -1452,6 +1486,7 @@
                     "https://i.postimg.cc/fbDDVK9d/515145126-3768433203448592-2237281130776677129-n.jpg"
                 ],
                 isNewArrival: true,
+                discount: true,
                 collection: "bags",
                 sizeFit: {
                     Depth: "13.9 cm",
@@ -1476,6 +1511,7 @@
                     "https://i.postimg.cc/fbDDVK9d/515145126-3768433203448592-2237281130776677129-n.jpg"
                 ],
                 isNewArrival: true,
+                discount: true,
                 collection: "bags",
                 sizeFit: {
                     Depth: "13.9 cm",
@@ -1513,6 +1549,7 @@
                 category: "Coach",
                 price: 1499,
                 oldPrice: 1999,
+                discount: true,
                 description: "Signature coated canvas and refined calf leather with inside zip and multifunction pockets.",
                 images: [
                     "https://i.postimg.cc/KcLSdD5B/511172410-1131850709160359-3044113433936647230-n.jpg",
@@ -1532,6 +1569,7 @@
                 category: "Coach",
                 price: 1499,
                 oldPrice: 1999,
+                discount: true,
                 description: "Black version of the classic Brooklyn shoulder bag with detachable strap.",
                 images: [
                     "https://i.postimg.cc/K8CCqKgJ/515084078-1043461061293291-6105606753388115797-n.jpg",
@@ -1554,6 +1592,7 @@
                 category: "Coach",
                 price: 1499,
                 oldPrice: 1999,
+                discount: true,
                 description: "Brown leather version of the classic Brooklyn shoulder bag.",
                 images: [
                     "https://i.postimg.cc/NG3cCzq1/512625744-1671995116838611-639312108551405633-n.jpg",
@@ -1599,6 +1638,7 @@
                 category: "Coach",
                 price: 1499,
                 oldPrice: 1999,
+                discount: true,
                 description: "Crafted from quilted leather, COACH's Tabby shoulder bag is complete with the signature gold-tone logo plaque on the foldover design.",
                 images: [
                     "https://i.postimg.cc/rwmKCwBh/512332456-1071041184483176-2686517150474219880-n.jpg",
@@ -1622,6 +1662,7 @@
                 category: "Coach",
                 price: 1499,
                 oldPrice: 1999,
+                discount: true,
                 description: "Coach revives an archival design from the 70s, imagining the Tabby bag for a modern sensibility in chalk white.",
                 images: [
                     "https://i.postimg.cc/sDk2BcTf/513189979-1225415772158288-6210767396290395887-n.jpg",
@@ -1645,6 +1686,7 @@
                 category: "Coach",
                 price: 1499,
                 oldPrice: 1999,
+                discount: true,
                 description: "Classic black version of the Tabby shoulder bag with matching signature logo plaque.",
                 images: [
                     "https://i.postimg.cc/3NPDxHyY/513098446-3976343192582171-3687339988261245390-n.jpg",
@@ -1674,7 +1716,6 @@
                     "https://i.postimg.cc/YSfVNrkD/511219342-614768721653653-6860608677151010019-n.jpg",
                     "https://i.postimg.cc/NMsnp3js/514867591-9816846158442812-8719773087316132299-n.jpg",
                     "https://i.postimg.cc/qR15Y1N8/514910549-1215934590546587-5235246506379699106-n.jpg",
-                    "https://i.postimg.cc/pr71VyYr/515060263-1391576725432381-1660045033502291805-n.jpg",
                     "https://i.postimg.cc/TYL47qfD/516097918-712780794781282-1263877348552128212-n.jpg"
                 ],
                 isNewArrival: true,
@@ -1716,6 +1757,7 @@
             document.getElementById('bags-slider').innerHTML = '';
             document.getElementById('wallets-slider').innerHTML = '';
             document.getElementById('belts-slider').innerHTML = '';
+            document.getElementById('discount-slider').innerHTML = '';
             
             // Render all products as bags (since we're now a bags-only store)
             products.forEach(product => {
@@ -1725,6 +1767,7 @@
                             <img src="${product.images[0]}" alt="${product.name}">
                             ${product.isNewArrival ? '<span class="product-badge">New</span>' : ''}
                             ${product.oldPrice ? '<span class="product-badge">Sale</span>' : ''}
+                            ${product.discount ? '<span class="product-badge" style="background-color: var(--secondary);">Discount</span>' : ''}
                         </div>
                         <div class="product-content">
                             <span class="product-category">${product.category}</span>
@@ -1737,9 +1780,13 @@
                     </div>
                 `;
                 
-                // Add to appropriate collection
+                // Add to appropriate collections
                 if (product.isNewArrival) {
                     document.getElementById('new-arrivals-slider').innerHTML += productHTML;
+                }
+                
+                if (product.discount) {
+                    document.getElementById('discount-slider').innerHTML += productHTML;
                 }
                 
                 document.getElementById('bags-slider').innerHTML += productHTML;
@@ -2084,6 +2131,20 @@
             document.body.style.overflow = 'auto';
         }
         
+        // Toggle submenu in sidebar
+        function toggleSubmenu(item) {
+            item.classList.toggle('active');
+            const submenu = item.querySelector('.submenu');
+            submenu.classList.toggle('active');
+        }
+        
+        // Filter products by brand
+        function filterByBrand(brand) {
+            // In this case we only have Coach brand
+            closeSidebar();
+            document.getElementById('bags').scrollIntoView({ behavior: 'smooth' });
+        }
+        
         // Hero Slider Functionality
         let currentSlide = 0;
         const slides = document.querySelectorAll('.hero-slide');
@@ -2129,6 +2190,7 @@
         const bagsSlider = document.getElementById('bags-slider');
         const walletsSlider = document.getElementById('wallets-slider');
         const beltsSlider = document.getElementById('belts-slider');
+        const discountSlider = document.getElementById('discount-slider');
         
         // New Arrivals controls
         document.querySelector('.new-arrivals-left').addEventListener('click', () => {
@@ -2137,6 +2199,15 @@
         
         document.querySelector('.new-arrivals-right').addEventListener('click', () => {
             newArrivalsSlider.scrollBy({ left: 300, behavior: 'smooth' });
+        });
+        
+        // Discount controls
+        document.querySelector('.discount-left').addEventListener('click', () => {
+            discountSlider.scrollBy({ left: -300, behavior: 'smooth' });
+        });
+        
+        document.querySelector('.discount-right').addEventListener('click', () => {
+            discountSlider.scrollBy({ left: 300, behavior: 'smooth' });
         });
         
         // Bags controls
