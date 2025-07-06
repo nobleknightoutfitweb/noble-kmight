@@ -6,6 +6,10 @@
     <title>Noble Knight Outfit | Luxury Coach Bags</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/CxP2JBGQ/Chat-GPT-Image-Jul-4-2025-10-08-25-PM.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
     <style>
         /* Global Styles */
         :root {
@@ -297,9 +301,9 @@
             display: block;
         }
         
-        /* Hero Section - Three Luxury Coach Bags */
+        /* Hero Section - Made 50% bigger */
         .hero {
-            height: 100vh;
+            height: 75vh;
             margin-top: 0;
             position: relative;
             overflow: hidden;
@@ -349,15 +353,15 @@
         }
         
         .hero-content h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
+            font-size: 3rem;
+            margin-bottom: 15px;
             line-height: 1.2;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         
         .hero-content p {
             font-size: 1.3rem;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             opacity: 0.9;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
             max-width: 700px;
@@ -683,7 +687,7 @@
             margin-left: 10px;
         }
         
-        /* Size & Fit Section */
+        /* Size & Fit Section - Enhanced */
         .product-size-fit {
             margin: 20px 0;
             padding: 15px;
@@ -692,12 +696,44 @@
         }
         
         .product-size-fit h3 {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .product-size-fit ul {
-            margin-left: 20px;
+        .size-fit-toggle {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .size-fit-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .size-fit-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .size-fit-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        
+        .size-fit-value {
+            font-weight: 700;
+            margin-top: 5px;
         }
         
         /* Return & Delivery Info */
@@ -1121,6 +1157,266 @@
             font-size: 1rem;
         }
 
+        /* Admin Panel Styles */
+        .admin-panel {
+            display: none;
+            padding: 100px 20px 60px;
+            background: white;
+        }
+
+        .admin-panel.active {
+            display: block;
+        }
+
+        .admin-login-form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 30px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .admin-login-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .admin-form-group {
+            margin-bottom: 20px;
+        }
+
+        .admin-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .admin-form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .admin-login-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .admin-login-btn:hover {
+            background: var(--secondary);
+        }
+
+        .admin-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .admin-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .admin-form-group textarea,
+        .admin-form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .admin-form-group textarea {
+            min-height: 100px;
+        }
+
+        .admin-form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .admin-products-list {
+            margin-top: 30px;
+        }
+
+        .admin-product-item {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            background: white;
+        }
+
+        .admin-product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .admin-product-details {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .admin-product-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .admin-product-price {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .admin-product-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .admin-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .admin-btn-edit {
+            background: var(--primary);
+            color: white;
+        }
+
+        .admin-btn-delete {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .admin-btn-add {
+            background: var(--primary);
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        /* File Upload */
+        .file-upload-container {
+            margin-bottom: 20px;
+        }
+
+        .file-upload-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .file-upload-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .file-upload-button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: 10px 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+
+        .file-upload-button:hover {
+            background: var(--secondary);
+        }
+
+        .file-upload-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .upload-progress {
+            width: 100%;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Hero Banner Admin Controls */
+        .hero-banner-admin {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hero-banner-admin h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .hero-slide-admin {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .hero-slide-admin img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .hero-slide-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .hero-slide-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
         /* Responsive Styles */
         @media (min-width: 768px) {
             .product-page-container {
@@ -1138,6 +1434,14 @@
             
             .recommended-grid {
                 grid-template-columns: repeat(4, 1fr);
+            }
+
+            .admin-product-item {
+                flex-wrap: nowrap;
+            }
+
+            .size-fit-grid {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
 
@@ -1181,6 +1485,7 @@
             </li>
             <li><a href="#wallets" onclick="closeSidebar()">Wallets</a></li>
             <li><a href="#belts" onclick="closeSidebar()">Belts</a></li>
+            <li><a href="#" onclick="showAdminLogin(); closeSidebar()">Admin Panel</a></li>
             <li><a href="#" onclick="closeSidebar()">Return & Exchange Policy</a></li>
         </ul>
         
@@ -1189,7 +1494,6 @@
             <h3>Our Location</h3>
             <p><i class="fas fa-map-marker-alt"></i>4 El- Nasr Buildings, El Tayran St., extension, Nasr City, Cairo.</p>
             <p><i class="fas fa-phone"></i> 01016692424</p>
-            <p><i class="fas fa-clock"></i> Open Daily: 10AM - 10PM</p>
             <a href="https://maps.app.goo.gl/SrEj6efBDqJ4nU2KA?g_st=ic" class="location-link" target="_blank">
                 <i class="fas fa-map-marked-alt"></i> View on Google Maps
             </a>
@@ -1240,7 +1544,7 @@
             <!-- Hero Section - Three Luxury Coach Bags -->
             <section class="hero">
                 <!-- Slide 1 - Lana Pebbled-Leather Tote -->
-                <div class="hero-slide active">
+                <div class="hero-slide active" id="hero-slide-1">
                     <img src="https://i.postimg.cc/CxP2JBGQ/Chat-GPT-Image-Jul-4-2025-10-08-25-PM.png" alt="Luxury Coach Bag">
                     <div class="hero-content">
                         <div class="container">
@@ -1252,7 +1556,7 @@
                 </div>
                 
                 <!-- Slide 2 - Brooklyn Shoulder Bag -->
-                <div class="hero-slide">
+                <div class="hero-slide" id="hero-slide-2">
                     <img src="https://i.postimg.cc/KcLSdD5B/511172410-1131850709160359-3044113433936647230-n.jpg" alt="Brooklyn Shoulder Bag">
                     <div class="hero-content">
                         <div class="container">
@@ -1264,7 +1568,7 @@
                 </div>
                 
                 <!-- Slide 3 - Tabby Shoulder Bag -->
-                <div class="hero-slide">
+                <div class="hero-slide" id="hero-slide-3">
                     <img src="https://i.postimg.cc/sDk2BcTf/513189979-1225415772158288-6210767396290395887-n.jpg" alt="Tabby Shoulder Bag">
                     <div class="hero-content">
                         <div class="container">
@@ -1419,13 +1723,10 @@
                         
                         <!-- Size & Fit Information -->
                         <div class="product-size-fit">
-                            <h3>Size & Fit</h3>
-                            <ul>
-                                <li>True to size - order your usual size</li>
-                                <li>Model is 6'1" and wears size Medium</li>
-                                <li>Slim fit design</li>
-                                <li>100% Genuine Leather</li>
-                            </ul>
+                            <h3>Size & Fit <button class="size-fit-toggle" onclick="toggleSizeFit()">Show Details</button></h3>
+                            <div class="size-fit-grid" id="size-fit-grid" style="display: none;">
+                                <!-- Size & fit details will be added here dynamically -->
+                            </div>
                         </div>
                         
                         <p id="product-page-description" class="product-page-description"></p>
@@ -1448,6 +1749,236 @@
                 <h3 class="recommended-title">You May Also Like</h3>
                 <div class="recommended-grid" id="recommended-products">
                     <!-- Recommended products will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel (hidden by default) -->
+        <div id="admin-panel" class="admin-panel">
+            <div class="container">
+                <!-- Admin Login Form -->
+                <div class="admin-login-form" id="adminLoginForm">
+                    <h2>Admin Login</h2>
+                    <div class="admin-form-group">
+                        <label for="admin-username">Username</label>
+                        <input type="text" id="admin-username" placeholder="Enter username">
+                    </div>
+                    <div class="admin-form-group">
+                        <label for="admin-password">Password</label>
+                        <input type="password" id="admin-password" placeholder="Enter password">
+                    </div>
+                    <button class="admin-login-btn" onclick="adminLogin()">Login</button>
+                </div>
+                
+                <!-- Admin Dashboard (hidden by default) -->
+                <div id="adminDashboard" style="display: none;">
+                    <h1 class="section-title">Admin Panel</h1>
+                    
+                    <div class="admin-form" id="adminProductForm">
+                        <h2 id="admin-form-title">Add New Product</h2>
+                        <form id="admin-product-form">
+                            <input type="hidden" id="admin-product-id">
+                            
+                            <div class="admin-form-group">
+                                <label for="admin-product-title">Title</label>
+                                <input type="text" id="admin-product-title" required>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label for="admin-product-category">Category</label>
+                                <input type="text" id="admin-product-category" placeholder="Enter category (e.g. Coach, Gucci, etc.)" required>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label for="admin-product-price">Price (EGP)</label>
+                                <input type="number" id="admin-product-price" required>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label for="admin-product-old-price">Old Price (EGP)</label>
+                                <input type="number" id="admin-product-old-price">
+                            </div>
+                            
+                            <!-- File Upload for Main Image -->
+                            <div class="file-upload-container">
+                                <label class="file-upload-label">Main Image</label>
+                                <div class="file-upload-wrapper">
+                                    <input type="text" id="admin-product-image" class="file-upload-input" placeholder="Image URL or upload file">
+                                    <button type="button" class="file-upload-button" onclick="document.getElementById('main-image-upload').click()">Upload</button>
+                                    <input type="file" id="main-image-upload" style="display: none;" onchange="uploadImage(this, 'admin-product-image')">
+                                </div>
+                                <img id="main-image-preview" class="file-upload-preview">
+                                <progress id="main-image-progress" class="upload-progress" value="0" max="100"></progress>
+                            </div>
+                            
+                            <!-- File Upload for Additional Images -->
+                            <div class="file-upload-container">
+                                <label class="file-upload-label">Additional Images (comma separated URLs or upload files)</label>
+                                <textarea id="admin-product-images" placeholder="Image URLs separated by commas"></textarea>
+                                <div class="file-upload-wrapper">
+                                    <input type="file" id="additional-images-upload" multiple style="display: none;" onchange="uploadAdditionalImages(this)">
+                                    <button type="button" class="file-upload-button" onclick="document.getElementById('additional-images-upload').click()">Upload Multiple</button>
+                                </div>
+                                <div id="additional-images-previews" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+                                <progress id="additional-images-progress" class="upload-progress" value="0" max="100"></progress>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label for="admin-product-description">Description</label>
+                                <textarea id="admin-product-description" required></textarea>
+                            </div>
+                            
+                            <!-- Size & Fit Customization -->
+                            <div class="admin-form-group">
+                                <label>Size & Fit Details</label>
+                                <div class="size-fit-grid" style="grid-template-columns: repeat(2, 1fr);">
+                                    <div class="admin-form-group">
+                                        <label for="admin-product-depth">Depth (cm)</label>
+                                        <input type="text" id="admin-product-depth">
+                                    </div>
+                                    <div class="admin-form-group">
+                                        <label for="admin-product-width">Width (cm)</label>
+                                        <input type="text" id="admin-product-width">
+                                    </div>
+                                    <div class="admin-form-group">
+                                        <label for="admin-product-height">Height (cm)</label>
+                                        <input type="text" id="admin-product-height">
+                                    </div>
+                                    <div class="admin-form-group">
+                                        <label for="admin-product-handle">Handle Length (cm)</label>
+                                        <input type="text" id="admin-product-handle">
+                                    </div>
+                                    <div class="admin-form-group">
+                                        <label for="admin-product-strap">Strap Length (cm)</label>
+                                        <input type="text" id="admin-product-strap">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label for="admin-product-collection">Collection</label>
+                                <select id="admin-product-collection" required>
+                                    <option value="bags">Bags</option>
+                                    <option value="wallets">Wallets</option>
+                                    <option value="belts">Belts</option>
+                                </select>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label>
+                                    <input type="checkbox" id="admin-product-new"> New Arrival
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="admin-product-discount"> Discount
+                                </label>
+                            </div>
+                            
+                            <div class="admin-form-actions">
+                                <button type="button" class="admin-btn admin-btn-add" onclick="saveProduct()">Save Product</button>
+                                <button type="button" class="admin-btn admin-btn-delete" onclick="resetAdminForm()">Reset Form</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Hero Banner Customization -->
+                    <div class="hero-banner-admin">
+                        <h2>Hero Banner Management</h2>
+                        <p>Manage the slideshow images and content on the homepage hero banner.</p>
+                        
+                        <div class="hero-slide-admin">
+                            <h3>Slide 1</h3>
+                            <img id="hero-slide-1-preview" src="https://i.postimg.cc/CxP2JBGQ/Chat-GPT-Image-Jul-4-2025-10-08-25-PM.png" alt="Slide 1 Preview">
+                            <div class="hero-slide-inputs">
+                                <div class="admin-form-group">
+                                    <label>Image URL</label>
+                                    <input type="text" id="hero-slide-1-image" value="https://i.postimg.cc/CxP2JBGQ/Chat-GPT-Image-Jul-4-2025-10-08-25-PM.png">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Title</label>
+                                    <input type="text" id="hero-slide-1-title" value="Luxury Coach Bags">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Description</label>
+                                    <input type="text" id="hero-slide-1-desc" value="Elevate your style with our premium Coach bag collection">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Button Text</label>
+                                    <input type="text" id="hero-slide-1-btn" value="Shop Now">
+                                </div>
+                            </div>
+                            <div class="hero-slide-actions">
+                                <button class="admin-btn admin-btn-edit" onclick="updateHeroSlide(1)">Update Slide</button>
+                                <button class="file-upload-button" onclick="document.getElementById('hero-slide-1-upload').click()">Upload New Image</button>
+                                <input type="file" id="hero-slide-1-upload" style="display: none;" onchange="uploadHeroSlideImage(this, 1)">
+                            </div>
+                        </div>
+                        
+                        <div class="hero-slide-admin">
+                            <h3>Slide 2</h3>
+                            <img id="hero-slide-2-preview" src="https://i.postimg.cc/KcLSdD5B/511172410-1131850709160359-3044113433936647230-n.jpg" alt="Slide 2 Preview">
+                            <div class="hero-slide-inputs">
+                                <div class="admin-form-group">
+                                    <label>Image URL</label>
+                                    <input type="text" id="hero-slide-2-image" value="https://i.postimg.cc/KcLSdD5B/511172410-1131850709160359-3044113433936647230-n.jpg">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Title</label>
+                                    <input type="text" id="hero-slide-2-title" value="Brooklyn Shoulder Bag">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Description</label>
+                                    <input type="text" id="hero-slide-2-desc" value="Classic design meets modern luxury">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Button Text</label>
+                                    <input type="text" id="hero-slide-2-btn" value="Shop Bags">
+                                </div>
+                            </div>
+                            <div class="hero-slide-actions">
+                                <button class="admin-btn admin-btn-edit" onclick="updateHeroSlide(2)">Update Slide</button>
+                                <button class="file-upload-button" onclick="document.getElementById('hero-slide-2-upload').click()">Upload New Image</button>
+                                <input type="file" id="hero-slide-2-upload" style="display: none;" onchange="uploadHeroSlideImage(this, 2)">
+                            </div>
+                        </div>
+                        
+                        <div class="hero-slide-admin">
+                            <h3>Slide 3</h3>
+                            <img id="hero-slide-3-preview" src="https://i.postimg.cc/sDk2BcTf/513189979-1225415772158288-6210767396290395887-n.jpg" alt="Slide 3 Preview">
+                            <div class="hero-slide-inputs">
+                                <div class="admin-form-group">
+                                    <label>Image URL</label>
+                                    <input type="text" id="hero-slide-3-image" value="https://i.postimg.cc/sDk2BcTf/513189979-1225415772158288-6210767396290395887-n.jpg">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Title</label>
+                                    <input type="text" id="hero-slide-3-title" value="Tabby Shoulder Bag">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Description</label>
+                                    <input type="text" id="hero-slide-3-desc" value="Timeless elegance with contemporary flair">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Button Text</label>
+                                    <input type="text" id="hero-slide-3-btn" value="Shop Now">
+                                </div>
+                            </div>
+                            <div class="hero-slide-actions">
+                                <button class="admin-btn admin-btn-edit" onclick="updateHeroSlide(3)">Update Slide</button>
+                                <button class="file-upload-button" onclick="document.getElementById('hero-slide-3-upload').click()">Upload New Image</button>
+                                <input type="file" id="hero-slide-3-upload" style="display: none;" onchange="uploadHeroSlideImage(this, 3)">
+                            </div>
+                        </div>
+                        
+                        <div class="admin-form-actions">
+                            <button class="admin-btn admin-btn-add" onclick="addNewHeroSlide()">Add New Slide</button>
+                            <button class="admin-btn admin-btn-delete" onclick="removeHeroSlide()">Remove Last Slide</button>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-products-list" id="admin-products-list">
+                        <h2>Current Products</h2>
+                        <!-- Products will be listed here -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -1510,286 +2041,600 @@
     </div>
     
     <script>
-        // Product Data - All products are now bags
-        const products = [
-            {
-                id: 1,
-                name: "Lana Pebbled-Leather Tote Bag",
-                category: "Coach",
-                price: 1499,
-                oldPrice: 1999,
-                description: "Coach's Lana bag is a modern take on a curved 1990s silhouette. It's adorned with gleaming gold-tone hardware that complements its brown pebbled-leather construction.",
-                images: [
-                    "https://i.postimg.cc/q7TM8r9z/513087594-1456240378719390-5694800212588634631-n.jpg",
-                    "https://i.postimg.cc/sXfjNcfz/514071687-1667317143982759-4637127192914100315-n.jpg",
-                    "https://i.postimg.cc/Qt68GTVT/515049773-592529150573699-3367978731033102564-n.jpg",
-                    "https://i.postimg.cc/FHjhFq7m/512491219-1663162381053282-3783527435119766994-n.jpg",
-                    "https://i.postimg.cc/fbDDVK9d/515145126-3768433203448592-2237281130776677129-n.jpg"
-                ],
-                isNewArrival: true,
-                discount: true,
-                collection: "bags",
-                sizeFit: {
-                    Depth: "13.9 cm",
-                    Handle: "12.7 cm",
-                    Height: "17.7 cm",
-                    Strap: "54.6 cm",
-                    Width: "22.2 cm"
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB1QeRzYbB8n4L7Q9Q5Y4X4Z4X4Z4X4Z4X",
+            authDomain: "test-1d0cc.firebaseapp.com",
+            databaseURL: "https://test-1d0cc-default-rtdb.firebaseio.com",
+            projectId: "test-1d0cc",
+            storageBucket: "test-1d0cc.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef1234567890"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const storage = firebase.storage();
+        const productsRef = database.ref('products');
+        const heroSlidesRef = database.ref('heroSlides');
+        const categoriesRef = database.ref('categories');
+
+        // Admin credentials
+        const ADMIN_CREDENTIALS = {
+            username: "admin",
+            password: "admin8200" // Changed password as requested
+        };
+
+        // Product Data - Will be loaded from Firebase
+        let products = [];
+        let heroSlides = [];
+        let categories = [];
+        let isAdminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+
+        // Check if admin is already logged in
+        if (isAdminLoggedIn) {
+            document.getElementById('adminLoginForm').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            document.getElementById('adminProductForm').style.display = 'block';
+        }
+
+        // Load products from Firebase
+        function loadProductsFromFirebase() {
+            productsRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                products = [];
+                if (data) {
+                    for (let id in data) {
+                        products.push({
+                            id: id,
+                            ...data[id]
+                        });
+                    }
                 }
-            },
-            {
-                id: 2,
-                name: "Off-White Leather Tote Bag",
-                category: "Coach",
-                price: 1499,
-                oldPrice: 1999,
-                description: "Off-white, leather, top handles, structured shape, logo detail, open top. Composition: 100% Calf Leather.",
-                images: [
-                    "https://i.postimg.cc/XvgLWwFx/515146114-1281826676822178-833366470045151845-n.jpg",
-                    "https://i.postimg.cc/D0Rd65kf/515102743-1887918481974540-3178215467562683115-n.jpg",
-                    "https://i.postimg.cc/zBcnDpfw/513221784-23886721194325451-6414244837301478855-n.jpg",
-                    "https://i.postimg.cc/Y0LQvg45/515395581-782014920816846-4712376591364234395-n.jpg",
-                    "https://i.postimg.cc/fbDDVK9d/515145126-3768433203448592-2237281130776677129-n.jpg"
-                ],
-                isNewArrival: true,
-                discount: true,
-                collection: "bags",
-                sizeFit: {
-                    Depth: "13.9 cm",
-                    Handle: "31 cm",
-                    Height: "18 cm",
-                    Width: "24 cm"
+                renderProducts();
+                if (isAdminLoggedIn) {
+                    renderAdminProducts();
                 }
-            },
-            {
-                id: 3,
-                name: "Classic Leather Tote Bag",
-                category: "Coach",
-                price: 1499,
-                oldPrice: 1999,
-                description: "Timeless classic leather tote bag with gold-tone hardware and spacious interior.",
-                images: [
-                    "https://i.postimg.cc/XqhK7LsS/511249459-693360296871952-7864704891613194870-n.jpg",
-                    "https://i.postimg.cc/W4676M1g/511224888-1439365814044016-8123274114765558464-n.jpg",
-                    "https://i.postimg.cc/NLqyzzNM/513106473-1203106178280035-7260973812464404877-n.jpg",
-                    "https://i.postimg.cc/0yCf7YQm/514764304-2241711856278317-6441720296237355777-n.jpg",
-                    "https://i.postimg.cc/q7PzRYTG/514875523-715887724510696-4820769575659416509-n.jpg"
-                ],
-                isNewArrival: false,
-                collection: "bags",
-                sizeFit: {
-                    Depth: "15 cm",
-                    Handle: "26 cm",
-                    Height: "30 cm",
-                    Width: "35 cm"
+            });
+        }
+
+        // Load categories from Firebase
+        function loadCategoriesFromFirebase() {
+            categoriesRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                categories = data || ['Coach'];
+                renderCategories();
+            });
+        }
+
+        // Load hero slides from Firebase
+        function loadHeroSlidesFromFirebase() {
+            heroSlidesRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                heroSlides = data || [
+                    {
+                        image: "https://i.postimg.cc/CxP2JBGQ/Chat-GPT-Image-Jul-4-2025-10-08-25-PM.png",
+                        title: "Luxury Coach Bags",
+                        description: "Elevate your style with our premium Coach bag collection",
+                        buttonText: "Shop Now"
+                    },
+                    {
+                        image: "https://i.postimg.cc/KcLSdD5B/511172410-1131850709160359-3044113433936647230-n.jpg",
+                        title: "Brooklyn Shoulder Bag",
+                        description: "Classic design meets modern luxury",
+                        buttonText: "Shop Bags"
+                    },
+                    {
+                        image: "https://i.postimg.cc/sDk2BcTf/513189979-1225415772158288-6210767396290395887-n.jpg",
+                        title: "Tabby Shoulder Bag",
+                        description: "Timeless elegance with contemporary flair",
+                        buttonText: "Shop Now"
+                    }
+                ];
+                
+                renderHeroSlides();
+                
+                if (isAdminLoggedIn) {
+                    updateHeroSlideInputs();
                 }
-            },
-            {
-                id: 4,
-                name: "Brooklyn 28 Shoulder Bag",
-                category: "Coach",
-                price: 1499,
-                oldPrice: 1999,
-                discount: true,
-                description: "Signature coated canvas and refined calf leather with inside zip and multifunction pockets.",
-                images: [
-                    "https://i.postimg.cc/KcLSdD5B/511172410-1131850709160359-3044113433936647230-n.jpg",
-                    "https://i.postimg.cc/k54Pzrjg/512248105-1432697721191708-7518166160578249922-n.jpg"
-                ],
-                isNewArrival: true,
-                collection: "bags",
-                sizeFit: {
-                    Depth: "3 cm",
-                    Height: "27.9 cm",
-                    Width: "27.9 cm"
+            });
+        }
+
+        // Render hero slides
+        function renderHeroSlides() {
+            const heroSlidesElements = document.querySelectorAll('.hero-slide');
+            
+            heroSlides.forEach((slide, index) => {
+                if (index < heroSlidesElements.length) {
+                    const slideElement = heroSlidesElements[index];
+                    slideElement.querySelector('img').src = slide.image;
+                    slideElement.querySelector('.hero-content h1').textContent = slide.title;
+                    slideElement.querySelector('.hero-content p').textContent = slide.description;
+                    slideElement.querySelector('.hero-content .btn').textContent = slide.buttonText;
                 }
-            },
-            {
-                id: 5,
-                name: "Brooklyn Shoulder Bag - Black",
-                category: "Coach",
-                price: 1499,
-                oldPrice: 1999,
-                discount: true,
-                description: "Black version of the classic Brooklyn shoulder bag with detachable strap.",
-                images: [
-                    "https://i.postimg.cc/K8CCqKgJ/515084078-1043461061293291-6105606753388115797-n.jpg",
-                    "https://i.postimg.cc/rFw6K2kC/514111673-970581795056296-7430736136081798010-n.jpg",
-                    "https://i.postimg.cc/BbcqsT2S/513078687-1425531595334293-5161570736750524667-n.jpg",
-                    "https://i.postimg.cc/rshPSzkG/516008054-660992243636592-7920781352772077599-n.jpg"
-                ],
-                isNewArrival: false,
-                collection: "bags",
-                sizeFit: {
-                    Depth: "3 cm",
-                    Height: "27.9 cm",
-                    Width: "27.9 cm",
-                    Material: "100% Leather"
+            });
+        }
+
+        // Update hero slide inputs in admin panel
+        function updateHeroSlideInputs() {
+            heroSlides.forEach((slide, index) => {
+                const slideNum = index + 1;
+                if (document.getElementById(`hero-slide-${slideNum}-image`)) {
+                    document.getElementById(`hero-slide-${slideNum}-image`).value = slide.image;
+                    document.getElementById(`hero-slide-${slideNum}-title`).value = slide.title;
+                    document.getElementById(`hero-slide-${slideNum}-desc`).value = slide.description;
+                    document.getElementById(`hero-slide-${slideNum}-btn`).value = slide.buttonText;
+                    document.getElementById(`hero-slide-${slideNum}-preview`).src = slide.image;
                 }
-            },
-            {
-                id: 6,
-                name: "Brooklyn Shoulder Bag - Brown",
-                category: "Coach",
-                price: 1499,
-                oldPrice: 1999,
-                discount: true,
-                description: "Brown leather version of the classic Brooklyn shoulder bag.",
-                images: [
-                    "https://i.postimg.cc/NG3cCzq1/512625744-1671995116838611-639312108551405633-n.jpg",
-                    "https://i.postimg.cc/N0Ch6Nk2/514462705-1255025466408154-213767007744067628-n.jpg",
-                    "https://i.postimg.cc/Px0BcPct/510750022-696179293246226-4818867986855261649-n.jpg",
-                    "https://i.postimg.cc/pVFNjJhy/512641960-711418295385074-3288997507044849075-n.jpg"
-                ],
-                isNewArrival: false,
-                collection: "bags",
-                sizeFit: {
-                    Depth: "3 cm",
-                    Height: "27.9 cm",
-                    Width: "27.9 cm",
-                    Material: "100% Leather"
-                }
-            },
-            {
-                id: 7,
-                name: "Willow Tote Bag",
-                category: "Coach",
-                price: 1499,
-                oldPrice: 1999,
-                description: "Light brown, top zip fastening, single top handle, adjustable detachable shoulder strap, all-over logo print.",
-                images: [
-                    "https://i.postimg.cc/dt5zPHgH/511249459-4228494887419718-6625769579974545927-n-1.png",
-                    "https://i.postimg.cc/8CJVgJ8F/511372518-1132653725678607-6992669066346727477-n.png",
-                    "https://i.postimg.cc/Dfd3h3Nc/513076477-1760245438209738-922299246663997501-n.png",
-                    "https://i.postimg.cc/fW2nyfw3/516086357-1116827873621943-6424541658599375037-n.png"
-                ],
-                isNewArrival: true,
-                collection: "bags",
-                sizeFit: {
-                    Depth: "15 cm",
-                    Height: "28 cm",
-                    Handle: "26 cm",
-                    Width: "35 cm"
-                }
-            },
-            {
-                id: 8,
-                name: "Tabby 26 Shoulder Bag",
-                category: "Coach",
-                price: 1499,
-                oldPrice: 1999,
-                discount: true,
-                description: "Crafted from quilted leather, COACH's Tabby shoulder bag is complete with the signature gold-tone logo plaque on the foldover design.",
-                images: [
-                    "https://i.postimg.cc/rwmKCwBh/512332456-1071041184483176-2686517150474219880-n.jpg",
-                    "https://i.postimg.cc/Dz40HYyL/514040779-1029788015982810-7706591271406354264-n.jpg",
-                    "https://i.postimg.cc/NM1Mf9X0/515146910-1272869407665893-1077584422332095946-n.jpg",
-                    "https://i.postimg.cc/PJy5Yg2s/514637631-707699548909046-9192474990185909821-n.jpg",
-                    "https://i.postimg.cc/QdwxQkkt/514027690-1207598034497508-3368386087058664704-n.jpg"
-                ],
-                isNewArrival: true,
-                collection: "bags",
-                sizeFit: {
-                    Depth: "8 cm",
-                    Height: "12 cm",
-                    Strap: "117 cm",
-                    Width: "26 cm"
-                }
-            },
-            {
-                id: 9,
-                name: "Tabby Shoulder Bag - White",
-                category: "Coach",
-                price: 1499,
-                oldPrice: 1999,
-                discount: true,
-                description: "Coach revives an archival design from the 70s, imagining the Tabby bag for a modern sensibility in chalk white.",
-                images: [
-                    "https://i.postimg.cc/sDk2BcTf/513189979-1225415772158288-6210767396290395887-n.jpg",
-                    "https://i.postimg.cc/nhqhqDW4/513239151-1429545335021732-7814918204107614862-n.jpg",
-                    "https://i.postimg.cc/BvsQpvWd/515257940-1107419054776948-1726680496242824421-n.jpg",
-                    "https://i.postimg.cc/9fpXnjCz/513439238-704793082158388-7710383368229339602-n.jpg"
-                ],
-                isNewArrival: true,
-                collection: "bags",
-                sizeFit: {
-                    Depth: "7 cm",
-                    Height: "12 cm",
-                    Handle: "20 cm",
-                    Width: "25 cm",
-                    Strap: "61 cm"
-                }
-            },
-            {
-                id: 10,
-                name: "Tabby Shoulder Bag - Black",
-                category: "Coach",
-                price: 1499,
-                oldPrice: 1999,
-                discount: true,
-                description: "Classic black version of the Tabby shoulder bag with matching signature logo plaque.",
-                images: [
-                    "https://i.postimg.cc/3NPDxHyY/513098446-3976343192582171-3687339988261245390-n.jpg",
-                    "https://i.postimg.cc/bYMnT1mW/513130673-1042468088031907-6239919080137711435-n.jpg",
-                    "https://i.postimg.cc/bwftXpcR/513423461-1014589434197521-8643059557238595052-n.jpg",
-                    "https://i.postimg.cc/GmPsdVbn/512663175-683038788067152-3505668117360362933-n.jpg"
-                ],
-                isNewArrival: false,
-                collection: "bags",
-                sizeFit: {
-                    Depth: "8 cm",
-                    Height: "15 cm",
-                    Handle: "20 cm",
-                    Width: "26 cm",
-                    Strap: "61 cm"
-                }
-            },
-            {
-                id: 11,
-                name: "Jonie Tote Bag",
-                category: "Coach",
-                price: 1499,
-                oldPrice: 1999,
-                description: "Light brown tote with top zip fastening and adjustable detachable shoulder strap.",
-                images: [
-                    "https://i.postimg.cc/W4PCJFRJ/512688843-1219273326189489-6406090494398867696-n.jpg",
-                    "https://i.postimg.cc/YSfVNrkD/511219342-614768721653653-6860608677151010019-n.jpg",
-                    "https://i.postimg.cc/NMsnp3js/514867591-9816846158442812-8719773087316132299-n.jpg",
-                    "https://i.postimg.cc/qR15Y1N8/514910549-1215934590546587-5235246506379699106-n.jpg",
-                    "https://i.postimg.cc/TYL47qfD/516097918-712780794781282-1263877348552128212-n.jpg"
-                ],
-                isNewArrival: true,
-                collection: "bags",
-                sizeFit: {
-                    Depth: "5 cm",
-                    Height: "9 cm",
-                    Width: "16 cm"
-                }
-            },
-            {
-                id: 12,
-                name: "Hanna Carryall Bag",
-                category: "Coach",
-                price: 1499,
-                oldPrice: 1999,
-                description: "Spacious carryall bag with center zip compartment and multiple pockets.",
-                images: [
-                    "https://i.postimg.cc/MKqxfpB4/511164193-1091991672794652-5185377298506562775-n-1.png",
-                    "https://i.postimg.cc/8CJVgJ8F/511372518-1132653725678607-6992669066346727477-n.png",
-                    "https://i.postimg.cc/Dfd3h3Nc/513076477-1760245438209738-922299246663997501-n.png",
-                    "https://i.postimg.cc/fW2nyfw3/516086357-1116827873621943-6424541658599375037-n.png"
-                ],
-                isNewArrival: false,
-                collection: "bags",
-                sizeFit: {
-                    Depth: "15 cm",
-                    Height: "30 cm",
-                    Handle: "26 cm",
-                    Width: "35 cm"
-                }
+            });
+        }
+
+        // Render categories in sidebar
+        function renderCategories() {
+            const sidebarMenu = document.querySelector('.sidebar-menu');
+            const bagsSubmenu = document.querySelector('.submenu');
+            
+            // Clear existing categories except Coach
+            bagsSubmenu.innerHTML = '';
+            
+            // Add all categories to submenu
+            categories.forEach(category => {
+                bagsSubmenu.innerHTML += `
+                    <li><a href="#bags" onclick="filterByBrand('${category}')">${category}</a></li>
+                `;
+            });
+        }
+
+        // Admin Login Functions
+        function showAdminLogin() {
+            document.getElementById('home-page').style.display = 'none';
+            document.getElementById('product-page').style.display = 'none';
+            document.getElementById('admin-panel').classList.add('active');
+            document.getElementById('adminLoginForm').style.display = 'block';
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('backButton').style.display = 'flex';
+            window.scrollTo(0, 0);
+        }
+
+        function adminLogin() {
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                isAdminLoggedIn = true;
+                localStorage.setItem('adminLoggedIn', 'true');
+                document.getElementById('adminLoginForm').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'block';
+                document.getElementById('adminProductForm').style.display = 'block';
+                renderAdminProducts();
+                updateHeroSlideInputs();
+            } else {
+                alert('Invalid username or password');
             }
-        ];
-        
+        }
+
+        function adminLogout() {
+            isAdminLoggedIn = false;
+            localStorage.removeItem('adminLoggedIn');
+            document.getElementById('adminLoginForm').style.display = 'block';
+            document.getElementById('adminDashboard').style.display = 'none';
+            resetAdminForm();
+        }
+
+        // Image Upload Functionality
+        function uploadImage(input, targetFieldId) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const previewId = targetFieldId + '-preview';
+            const progressId = targetFieldId + '-progress';
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById(previewId).src = e.target.result;
+                document.getElementById(previewId).style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+            
+            // Upload to Firebase Storage
+            const storageRef = storage.ref('product-images/' + file.name);
+            const uploadTask = storageRef.put(file);
+            
+            // Show progress
+            document.getElementById(progressId).style.display = 'block';
+            
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    // Progress
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    document.getElementById(progressId).value = progress;
+                },
+                (error) => {
+                    // Error
+                    console.error('Upload failed:', error);
+                    alert('Image upload failed: ' + error.message);
+                    document.getElementById(progressId).style.display = 'none';
+                },
+                () => {
+                    // Complete
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        document.getElementById(targetFieldId).value = downloadURL;
+                        document.getElementById(progressId).style.display = 'none';
+                    });
+                }
+            );
+        }
+
+        function uploadHeroSlideImage(input, slideNumber) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById(`hero-slide-${slideNumber}-preview`).src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            
+            // Upload to Firebase Storage
+            const storageRef = storage.ref('hero-slides/' + Date.now() + '-' + file.name);
+            const uploadTask = storageRef.put(file);
+            
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    // Progress
+                },
+                (error) => {
+                    // Error
+                    console.error('Upload failed:', error);
+                    alert('Image upload failed: ' + error.message);
+                },
+                () => {
+                    // Complete
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        document.getElementById(`hero-slide-${slideNumber}-image`).value = downloadURL;
+                        document.getElementById(`hero-slide-${slideNumber}-preview`).src = downloadURL;
+                    });
+                }
+            );
+        }
+
+        function uploadAdditionalImages(input) {
+            const files = input.files;
+            if (!files || files.length === 0) return;
+            
+            const previewsContainer = document.getElementById('additional-images-previews');
+            previewsContainer.innerHTML = '';
+            previewsContainer.style.display = 'flex';
+            
+            const progressBar = document.getElementById('additional-images-progress');
+            progressBar.style.display = 'block';
+            progressBar.value = 0;
+            
+            const urls = [];
+            let uploadedCount = 0;
+            
+            Array.from(files).forEach((file, index) => {
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.createElement('img');
+                    preview.src = e.target.result;
+                    preview.style.width = '80px';
+                    preview.style.height = '80px';
+                    preview.style.objectFit = 'cover';
+                    preview.style.borderRadius = '5px';
+                    previewsContainer.appendChild(preview);
+                };
+                reader.readAsDataURL(file);
+                
+                // Upload to Firebase Storage
+                const storageRef = storage.ref('product-images/' + Date.now() + '-' + file.name);
+                const uploadTask = storageRef.put(file);
+                
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        // Progress for individual file
+                    },
+                    (error) => {
+                        console.error('Upload failed:', error);
+                    },
+                    () => {
+                        // Complete
+                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                            urls.push(downloadURL);
+                            uploadedCount++;
+                            progressBar.value = (uploadedCount / files.length) * 100;
+                            
+                            if (uploadedCount === files.length) {
+                                // All files uploaded
+                                const currentUrls = document.getElementById('admin-product-images').value;
+                                const newUrls = urls.join(',');
+                                document.getElementById('admin-product-images').value = 
+                                    currentUrls ? currentUrls + ',' + newUrls : newUrls;
+                                progressBar.style.display = 'none';
+                            }
+                        });
+                    }
+                );
+            });
+        }
+
+        // Admin Panel Functions
+        function renderAdminProducts() {
+            const container = document.getElementById('admin-products-list');
+            container.innerHTML = '<h2>Current Products</h2>';
+            
+            if (products.length === 0) {
+                container.innerHTML += '<p>No products found</p>';
+                return;
+            }
+            
+            // Group products by category
+            const productsByCategory = {};
+            products.forEach(product => {
+                if (!productsByCategory[product.category]) {
+                    productsByCategory[product.category] = [];
+                }
+                productsByCategory[product.category].push(product);
+            });
+            
+            // Render each category section
+            for (const category in productsByCategory) {
+                container.innerHTML += `<h3 style="margin-top: 30px; border-bottom: 2px solid var(--primary); padding-bottom: 5px;">${category}</h3>`;
+                
+                productsByCategory[category].forEach(product => {
+                    const productDiv = document.createElement('div');
+                    productDiv.className = 'admin-product-item';
+                    productDiv.innerHTML = `
+                        <img src="${product.image}" class="admin-product-image" alt="${product.title}">
+                        <div class="admin-product-details">
+                            <h3 class="admin-product-title">${product.title}</h3>
+                            <p class="admin-product-price">${product.price} EGP</p>
+                            <p>${product.category} - ${product.collection}</p>
+                            <p>${product.isNewArrival ? 'New Arrival' : ''} ${product.discount ? 'Discount' : ''}</p>
+                        </div>
+                        <div class="admin-product-actions">
+                            <button class="admin-btn admin-btn-edit" onclick="editProduct('${product.id}')">Edit</button>
+                            <button class="admin-btn admin-btn-delete" onclick="deleteProduct('${product.id}')">Delete</button>
+                        </div>
+                    `;
+                    container.appendChild(productDiv);
+                });
+            }
+        }
+
+        function resetAdminForm() {
+            document.getElementById('admin-product-form').reset();
+            document.getElementById('admin-product-id').value = '';
+            document.getElementById('admin-product-category').value = '';
+            document.getElementById('admin-product-price').value = '';
+            document.getElementById('admin-product-old-price').value = '';
+            document.getElementById('admin-product-image').value = '';
+            document.getElementById('admin-product-images').value = '';
+            document.getElementById('admin-product-description').value = '';
+            document.getElementById('admin-product-collection').value = 'bags';
+            document.getElementById('admin-product-new').checked = false;
+            document.getElementById('admin-product-discount').checked = false;
+            document.getElementById('admin-product-depth').value = '';
+            document.getElementById('admin-product-width').value = '';
+            document.getElementById('admin-product-height').value = '';
+            document.getElementById('admin-product-handle').value = '';
+            document.getElementById('admin-product-strap').value = '';
+            document.getElementById('main-image-preview').style.display = 'none';
+            document.getElementById('additional-images-previews').innerHTML = '';
+            document.getElementById('additional-images-previews').style.display = 'none';
+            document.getElementById('admin-form-title').textContent = 'Add New Product';
+        }
+
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            document.getElementById('admin-product-id').value = product.id;
+            document.getElementById('admin-product-title').value = product.title;
+            document.getElementById('admin-product-category').value = product.category;
+            document.getElementById('admin-product-price').value = product.price;
+            document.getElementById('admin-product-old-price').value = product.oldPrice || '';
+            document.getElementById('admin-product-image').value = product.image;
+            
+            // Show main image preview
+            const mainImagePreview = document.getElementById('main-image-preview');
+            mainImagePreview.src = product.image;
+            mainImagePreview.style.display = 'block';
+            
+            // Set additional images
+            const additionalImages = product.images ? product.images.slice(1) : [];
+            document.getElementById('admin-product-images').value = additionalImages.join(',');
+            
+            // Show additional images previews
+            const previewsContainer = document.getElementById('additional-images-previews');
+            previewsContainer.innerHTML = '';
+            if (additionalImages.length > 0) {
+                additionalImages.forEach(url => {
+                    const preview = document.createElement('img');
+                    preview.src = url;
+                    preview.style.width = '80px';
+                    preview.style.height = '80px';
+                    preview.style.objectFit = 'cover';
+                    preview.style.borderRadius = '5px';
+                    previewsContainer.appendChild(preview);
+                });
+                previewsContainer.style.display = 'flex';
+            }
+            
+            document.getElementById('admin-product-description').value = product.description;
+            document.getElementById('admin-product-collection').value = product.collection || 'bags';
+            document.getElementById('admin-product-new').checked = product.isNewArrival || false;
+            document.getElementById('admin-product-discount').checked = product.discount || false;
+            
+            // Set size & fit details
+            if (product.sizeFit) {
+                document.getElementById('admin-product-depth').value = product.sizeFit.depth || '';
+                document.getElementById('admin-product-width').value = product.sizeFit.width || '';
+                document.getElementById('admin-product-height').value = product.sizeFit.height || '';
+                document.getElementById('admin-product-handle').value = product.sizeFit.handle || '';
+                document.getElementById('admin-product-strap').value = product.sizeFit.strap || '';
+            }
+            
+            document.getElementById('admin-form-title').textContent = 'Edit Product';
+            window.scrollTo(0, 0);
+        }
+
+        function saveProduct() {
+            const id = document.getElementById('admin-product-id').value;
+            const title = document.getElementById('admin-product-title').value;
+            const category = document.getElementById('admin-product-category').value;
+            const price = parseFloat(document.getElementById('admin-product-price').value);
+            const oldPrice = parseFloat(document.getElementById('admin-product-old-price').value) || null;
+            const image = document.getElementById('admin-product-image').value;
+            const additionalImages = document.getElementById('admin-product-images').value.split(',').filter(img => img.trim() !== '');
+            const images = [image, ...additionalImages];
+            const description = document.getElementById('admin-product-description').value;
+            const collection = document.getElementById('admin-product-collection').value;
+            const isNewArrival = document.getElementById('admin-product-new').checked;
+            const discount = document.getElementById('admin-product-discount').checked;
+            
+            // Size & fit details
+            const sizeFit = {
+                depth: document.getElementById('admin-product-depth').value,
+                width: document.getElementById('admin-product-width').value,
+                height: document.getElementById('admin-product-height').value,
+                handle: document.getElementById('admin-product-handle').value,
+                strap: document.getElementById('admin-product-strap').value
+            };
+            
+            const productData = {
+                title,
+                category,
+                price,
+                oldPrice,
+                image,
+                images,
+                description,
+                collection,
+                isNewArrival,
+                discount,
+                sizeFit
+            };
+            
+            // Add category to categories list if it doesn't exist
+            if (category && !categories.includes(category)) {
+                categories.push(category);
+                categoriesRef.set(categories)
+                    .then(() => {
+                        renderCategories();
+                    });
+            }
+            
+            if (id) {
+                // Update existing product
+                productsRef.child(id).update(productData)
+                    .then(() => {
+                        alert('Product updated successfully!');
+                        resetAdminForm();
+                    })
+                    .catch(error => {
+                        alert('Error updating product: ' + error.message);
+                    });
+            } else {
+                // Add new product
+                productsRef.push(productData)
+                    .then(() => {
+                        alert('Product added successfully!');
+                        resetAdminForm();
+                    })
+                    .catch(error => {
+                        alert('Error adding product: ' + error.message);
+                    });
+            }
+        }
+
+        function deleteProduct(productId) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                productsRef.child(productId).remove()
+                    .then(() => {
+                        alert('Product deleted successfully!');
+                    })
+                    .catch(error => {
+                        alert('Error deleting product: ' + error.message);
+                    });
+            }
+        }
+
+        // Hero Banner Management
+        function updateHeroSlide(slideNumber) {
+            const slideIndex = slideNumber - 1;
+            if (slideIndex >= heroSlides.length) return;
+            
+            const image = document.getElementById(`hero-slide-${slideNumber}-image`).value;
+            const title = document.getElementById(`hero-slide-${slideNumber}-title`).value;
+            const description = document.getElementById(`hero-slide-${slideNumber}-desc`).value;
+            const buttonText = document.getElementById(`hero-slide-${slideNumber}-btn`).value;
+            
+            heroSlides[slideIndex] = {
+                image,
+                title,
+                description,
+                buttonText
+            };
+            
+            // Update Firebase
+            heroSlidesRef.set(heroSlides)
+                .then(() => {
+                    alert('Hero slide updated successfully!');
+                    renderHeroSlides();
+                })
+                .catch(error => {
+                    alert('Error updating hero slide: ' + error.message);
+                });
+        }
+
+        function addNewHeroSlide() {
+            if (heroSlides.length >= 5) {
+                alert('Maximum of 5 slides allowed');
+                return;
+            }
+            
+            heroSlides.push({
+                image: "https://via.placeholder.com/1200x600?text=New+Slide",
+                title: "New Collection",
+                description: "Discover our latest arrivals",
+                buttonText: "Shop Now"
+            });
+            
+            // Update Firebase
+            heroSlidesRef.set(heroSlides)
+                .then(() => {
+                    alert('New hero slide added! You may need to refresh to see the new slide in the admin panel.');
+                    renderHeroSlides();
+                })
+                .catch(error => {
+                    alert('Error adding hero slide: ' + error.message);
+                });
+        }
+
+        function removeHeroSlide() {
+            if (heroSlides.length <= 1) {
+                alert('You must have at least one hero slide');
+                return;
+            }
+            
+            heroSlides.pop();
+            
+            // Update Firebase
+            heroSlidesRef.set(heroSlides)
+                .then(() => {
+                    alert('Hero slide removed! You may need to refresh to see the changes in the admin panel.');
+                    renderHeroSlides();
+                })
+                .catch(error => {
+                    alert('Error removing hero slide: ' + error.message);
+                });
+        }
+
         // Render Products Function
         function renderProducts() {
             // Clear all sliders first
@@ -1799,19 +2644,19 @@
             document.getElementById('belts-slider').innerHTML = '';
             document.getElementById('discount-slider').innerHTML = '';
             
-            // Render all products as bags (since we're now a bags-only store)
+            // Render all products
             products.forEach(product => {
                 const productHTML = `
-                    <div class="product-card" onclick="showProductPage(${product.id})">
+                    <div class="product-card" onclick="showProductPage('${product.id}')">
                         <div class="product-img">
-                            <img src="${product.images[0]}" alt="${product.name}">
+                            <img src="${product.image}" alt="${product.title}">
                             ${product.isNewArrival ? '<span class="product-badge">New</span>' : ''}
                             ${product.oldPrice ? '<span class="product-badge">Sale</span>' : ''}
                             ${product.discount ? '<span class="product-badge" style="background-color: var(--secondary);">Discount</span>' : ''}
                         </div>
                         <div class="product-content">
                             <span class="product-category">${product.category}</span>
-                            <h3 class="product-title">${product.name}</h3>
+                            <h3 class="product-title">${product.title}</h3>
                             <div class="product-price">
                                 <span class="current-price">${product.price.toLocaleString()} EGP</span>
                                 ${product.oldPrice ? `<span class="old-price">${product.oldPrice.toLocaleString()} EGP</span>` : ''}
@@ -1829,7 +2674,13 @@
                     document.getElementById('discount-slider').innerHTML += productHTML;
                 }
                 
-                document.getElementById('bags-slider').innerHTML += productHTML;
+                if (product.collection === 'bags') {
+                    document.getElementById('bags-slider').innerHTML += productHTML;
+                } else if (product.collection === 'wallets') {
+                    document.getElementById('wallets-slider').innerHTML += productHTML;
+                } else if (product.collection === 'belts') {
+                    document.getElementById('belts-slider').innerHTML += productHTML;
+                }
             });
         }
         
@@ -1841,14 +2692,15 @@
             // Hide home page, show product page
             document.getElementById('home-page').style.display = 'none';
             document.getElementById('product-page').style.display = 'block';
+            document.getElementById('admin-panel').classList.remove('active');
             document.getElementById('backButton').style.display = 'flex';
             
             // Set product details
             const mainImage = document.getElementById('product-main-image');
-            mainImage.src = product.images[0];
+            mainImage.src = product.image;
             
             document.getElementById('product-page-category').textContent = product.category;
-            document.getElementById('product-page-title').textContent = product.name;
+            document.getElementById('product-page-title').textContent = product.title;
             document.getElementById('product-page-price').textContent = `${product.price.toLocaleString()} EGP`;
             document.getElementById('product-page-old-price').textContent = product.oldPrice ? `${product.oldPrice.toLocaleString()} EGP` : '';
             document.getElementById('product-page-description').textContent = product.description;
@@ -1858,7 +2710,9 @@
             const thumbnailsContainer = document.getElementById('product-thumbnails');
             thumbnailsContainer.innerHTML = '';
             
-            product.images.forEach((image, index) => {
+            const productImages = product.images || [product.image];
+            
+            productImages.forEach((image, index) => {
                 const thumbnail = document.createElement('img');
                 thumbnail.src = image;
                 thumbnail.className = 'product-thumbnail';
@@ -1878,14 +2732,20 @@
             });
             
             // Update size & fit information
-            const sizeFitElement = document.querySelector('.product-size-fit ul');
-            sizeFitElement.innerHTML = '';
+            const sizeFitGrid = document.getElementById('size-fit-grid');
+            sizeFitGrid.innerHTML = '';
             
             if (product.sizeFit) {
                 for (const [key, value] of Object.entries(product.sizeFit)) {
-                    const li = document.createElement('li');
-                    li.textContent = `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`;
-                    sizeFitElement.appendChild(li);
+                    if (value) {
+                        const item = document.createElement('div');
+                        item.className = 'size-fit-item';
+                        item.innerHTML = `
+                            <div class="size-fit-label">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
+                            <div class="size-fit-value">${value}</div>
+                        `;
+                        sizeFitGrid.appendChild(item);
+                    }
                 }
             }
             
@@ -1899,12 +2759,12 @@
             
             recommendedProducts.slice(0, 4).forEach(recProduct => {
                 recommendedGrid.innerHTML += `
-                    <div class="recommended-card" onclick="showProductPage(${recProduct.id})">
+                    <div class="recommended-card" onclick="showProductPage('${recProduct.id}')">
                         <div class="recommended-img">
-                            <img src="${recProduct.images[0]}" alt="${recProduct.name}">
+                            <img src="${recProduct.image}" alt="${recProduct.title}">
                         </div>
                         <div class="recommended-content">
-                            <h3 class="recommended-title">${recProduct.name}</h3>
+                            <h3 class="recommended-title">${recProduct.title}</h3>
                             <span class="recommended-price">${recProduct.price.toLocaleString()} EGP</span>
                         </div>
                     </div>
@@ -1915,10 +2775,25 @@
             window.scrollTo(0, 0);
         }
         
+        // Toggle size & fit details
+        function toggleSizeFit() {
+            const grid = document.getElementById('size-fit-grid');
+            const button = document.querySelector('.size-fit-toggle');
+            
+            if (grid.style.display === 'none' || !grid.style.display) {
+                grid.style.display = 'grid';
+                button.textContent = 'Hide Details';
+            } else {
+                grid.style.display = 'none';
+                button.textContent = 'Show Details';
+            }
+        }
+        
         // Back to Home
         function backToHome() {
             document.getElementById('home-page').style.display = 'block';
             document.getElementById('product-page').style.display = 'none';
+            document.getElementById('admin-panel').classList.remove('active');
             document.getElementById('backButton').style.display = 'none';
             window.scrollTo(0, 0);
         }
@@ -1956,9 +2831,9 @@
             } else {
                 cart.push({
                     id: product.id,
-                    name: product.name,
+                    name: product.title,
                     price: product.price,
-                    image: product.images[0],
+                    image: product.image,
                     quantity: quantity
                 });
             }
@@ -1970,7 +2845,7 @@
             updateCartCount();
             
             // Show confirmation
-            alert(`${quantity} ${product.name} added to cart!`);
+            alert(`${quantity} ${product.title} added to cart!`);
         }
         
         function buyProductNow() {
@@ -2278,7 +3153,9 @@
         });
         
         // Initialize the page
-        renderProducts();
+        loadProductsFromFirebase();
+        loadCategoriesFromFirebase();
+        loadHeroSlidesFromFirebase();
         showSlide(currentSlide);
         updateSlideCounter();
         updateCartCount();
