@@ -1134,10 +1134,10 @@
             background: var(--secondary);
         }
 
-        /* Back Button */
+        /* Back Button (hidden by default) */
         .back-button {
             position: fixed;
-            top: 120px;
+            top: 150px; /* Adjusted to be lower */
             left: 20px;
             background: white;
             padding: 10px 20px;
@@ -2222,8 +2222,8 @@
             resetAdminForm();
         }
 
-        // Image Upload Functionality
-        function uploadImage(input, targetFieldId) {
+        // Image Upload Functionality using ImageBB API
+        async function uploadImage(input, targetFieldId) {
             const file = input.files[0];
             if (!file) return;
             
@@ -2238,36 +2238,35 @@
             };
             reader.readAsDataURL(file);
             
-            // Upload to Firebase Storage
-            const storageRef = storage.ref('product-images/' + file.name);
-            const uploadTask = storageRef.put(file);
-            
             // Show progress
             document.getElementById(progressId).style.display = 'block';
             
-            uploadTask.on('state_changed', 
-                (snapshot) => {
-                    // Progress
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    document.getElementById(progressId).value = progress;
-                },
-                (error) => {
-                    // Error
-                    console.error('Upload failed:', error);
-                    alert('Image upload failed: ' + error.message);
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                // Upload to ImageBB
+                const response = await fetch('https://api.imgbb.com/1/upload?key=66eb52bb083a381a7541a59b74c0ddf2', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById(targetFieldId).value = result.data.url;
                     document.getElementById(progressId).style.display = 'none';
-                },
-                () => {
-                    // Complete
-                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                        document.getElementById(targetFieldId).value = downloadURL;
-                        document.getElementById(progressId).style.display = 'none';
-                    });
+                } else {
+                    throw new Error('Image upload failed');
                 }
-            );
+            } catch (error) {
+                console.error('Upload failed:', error);
+                alert('Image upload failed: ' + error.message);
+                document.getElementById(progressId).style.display = 'none';
+            }
         }
 
-        function uploadHeroSlideImage(input, slideNumber) {
+        async function uploadHeroSlideImage(input, slideNumber) {
             const file = input.files[0];
             if (!file) return;
             
@@ -2278,30 +2277,31 @@
             };
             reader.readAsDataURL(file);
             
-            // Upload to Firebase Storage
-            const storageRef = storage.ref('hero-slides/' + Date.now() + '-' + file.name);
-            const uploadTask = storageRef.put(file);
-            
-            uploadTask.on('state_changed', 
-                (snapshot) => {
-                    // Progress
-                },
-                (error) => {
-                    // Error
-                    console.error('Upload failed:', error);
-                    alert('Image upload failed: ' + error.message);
-                },
-                () => {
-                    // Complete
-                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                        document.getElementById(`hero-slide-${slideNumber}-image`).value = downloadURL;
-                        document.getElementById(`hero-slide-${slideNumber}-preview`).src = downloadURL;
-                    });
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                // Upload to ImageBB
+                const response = await fetch('https://api.imgbb.com/1/upload?key=66eb52bb083a381a7541a59b74c0ddf2', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById(`hero-slide-${slideNumber}-image`).value = result.data.url;
+                    document.getElementById(`hero-slide-${slideNumber}-preview`).src = result.data.url;
+                } else {
+                    throw new Error('Image upload failed');
                 }
-            );
+            } catch (error) {
+                console.error('Upload failed:', error);
+                alert('Image upload failed: ' + error.message);
+            }
         }
 
-        function uploadAdditionalImages(input) {
+        async function uploadAdditionalImages(input) {
             const files = input.files;
             if (!files || files.length === 0) return;
             
@@ -2316,7 +2316,9 @@
             const urls = [];
             let uploadedCount = 0;
             
-            Array.from(files).forEach((file, index) => {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
                 // Show preview
                 const reader = new FileReader();
                 reader.onload = function(e) {
@@ -2330,36 +2332,38 @@
                 };
                 reader.readAsDataURL(file);
                 
-                // Upload to Firebase Storage
-                const storageRef = storage.ref('product-images/' + Date.now() + '-' + file.name);
-                const uploadTask = storageRef.put(file);
-                
-                uploadTask.on('state_changed', 
-                    (snapshot) => {
-                        // Progress for individual file
-                    },
-                    (error) => {
-                        console.error('Upload failed:', error);
-                    },
-                    () => {
-                        // Complete
-                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                            urls.push(downloadURL);
-                            uploadedCount++;
-                            progressBar.value = (uploadedCount / files.length) * 100;
-                            
-                            if (uploadedCount === files.length) {
-                                // All files uploaded
-                                const currentUrls = document.getElementById('admin-product-images').value;
-                                const newUrls = urls.join(',');
-                                document.getElementById('admin-product-images').value = 
-                                    currentUrls ? currentUrls + ',' + newUrls : newUrls;
-                                progressBar.style.display = 'none';
-                            }
-                        });
+                try {
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    
+                    // Upload to ImageBB
+                    const response = await fetch('https://api.imgbb.com/1/upload?key=66eb52bb083a381a7541a59b74c0ddf2', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        urls.push(result.data.url);
+                        uploadedCount++;
+                        progressBar.value = (uploadedCount / files.length) * 100;
+                        
+                        if (uploadedCount === files.length) {
+                            // All files uploaded
+                            const currentUrls = document.getElementById('admin-product-images').value;
+                            const newUrls = urls.join(',');
+                            document.getElementById('admin-product-images').value = 
+                                currentUrls ? currentUrls + ',' + newUrls : newUrls;
+                            progressBar.style.display = 'none';
+                        }
+                    } else {
+                        throw new Error('Image upload failed');
                     }
-                );
-            });
+                } catch (error) {
+                    console.error('Upload failed:', error);
+                }
+            }
         }
 
         // Admin Panel Functions
